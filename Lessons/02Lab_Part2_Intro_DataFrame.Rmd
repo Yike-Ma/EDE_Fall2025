@@ -38,7 +38,7 @@ How would you store it on another object?
 
 ```{r}
 car_speed <- cars$speed
-car_speed
+car_speed #pull a vector from dataframe
 ```
 
 ## Transforming object in a data frame
@@ -69,11 +69,11 @@ How could you add columns to *df_car_speed*?
 car_dist <- cars$dist
 
 #Option 1
-df <- cbind(df_car_speed,car_dist)  #similarly rows could be added using rbind()
+df <- cbind(df_car_speed,car_dist) #c for column #similarly rows could be added using rbind() 
 class(df)
 df
 
-#Or Option 2 - transform into a data frame before binding
+#Or Option 2 - transform into a data frame before binding, as long as they have same length
 df_car_dist <- as.data.frame(car_dist)  #op2
 df_opt2 <- cbind(df_car_speed,df_car_dist)
 class(df_opt2)
@@ -112,7 +112,7 @@ head(df) #show the first 6 rows of df
 #If you know the number of the column you want you can refer to that to access column
 df[,1]
 
-#you could also use this notation to delete columns
+#you could also use this notation to delete columns (delete columns with negative)
 df <- df[,-2]
 df
 ```
