@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Data frame definition
 
-A **data frame** is used for storing data tables. It a list a vector of equal length.
+A **data frame** is used for storing data tables. It a list a vector of **equal length**.
 
 When we import data to R, data frame is the preferred way for storing the data because columns can have different modes (character, numeric, integer, logical, complex).
 
@@ -54,7 +54,7 @@ is.data.frame(car_speed)
 ```
 
 How could you make it a data frame?
-
+as.dat.frame
 ```{r}
 df_car_speed <- as.data.frame(car_speed)
 df_car_speed
