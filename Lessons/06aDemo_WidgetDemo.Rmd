@@ -1,0 +1,26 @@
+---
+title: Interactive Rmd
+output: html_document
+runtime: shiny #shiny is dashboard package
+---
+  
+```{r, echo = FALSE}
+
+
+#widget
+numericInput("n",
+"How many cars?", 5)
+
+
+
+renderTable({
+head(cars, input$n) #input$n defines how many cars you want to see
+})
+
+
+#select input
+#sliderinpit
+#renderplot
+
+```
+
