@@ -72,6 +72,8 @@ my_theme <- theme_base() +
     legend.title = element_blank(),
     complete = T
   )
+
+
 ```
 
 ## Create graphs
