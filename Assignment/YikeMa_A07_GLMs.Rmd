@@ -70,7 +70,7 @@ summary(ntl)
 temp_dep <- ntl %>% 
   ggplot(aes(x = depth, y = temperature_C))+
   geom_point()+
-  geom_smooth(method = lm)+
+  geom_smooth(method = "lm")+
   ylim(c(0,35))+
   xlab("Depth (m)")+
   ylab(expression("Temperature"*~degree*"C"))
@@ -192,22 +192,11 @@ Mean temperature of Central Long Lake and Crampton Lake are significantly differ
 
 ```{r t.test}
 ntl.Crampton.Ward <- ntl %>% 
-  filter(lakename == c("Crampton Lake" , "Ward Lake"))
-
-  ntl.Crampton.Ward.plot <-
-  ggplot(data = ntl.Crampton.Ward, aes(x = depth, y = temperature_C, colour = lakename))+
-  geom_point(alpha = 0.5, size = 1)+
-  geom_smooth(method = "lm", se = F)+
-  ylim(c(0,35))+
-  xlim(c(0,15))+
-  xlab("Depth (m)")+
-  ylab(expression("Temperature"*~degree*"C"))+
-  labs(color = "Lake Name")
-ntl.Crampton.Ward.plot
+  filter(lakename %in% c("Crampton Lake" , "Ward Lake"))
 
 t.test(ntl.Crampton.Ward$temperature_C~ntl.Crampton.Ward$lakename)
 ```
 
->Answer: T-test suggests a p-value of 0.33 (<0.5), so the mean temperature in both lakes are different. 
-Mean temperature for Crampton Lake and Ward Lake is 15.37 and 14.25 degree Celcius, respectively. However, the mean values are slightly different from the results of HSD.test(), and was shown statistically the same in question 16. The different results could be caused by number of categories included (?).
+>Answer: T-test suggests a p-value of 0.26 (<0.5), so the mean temperature in both lakes are different. 
+Mean temperature for Crampton Lake and Ward Lake is 15.35 and 14.46 degree Celcius, respectively. However, the mean values were shown statistically the same in question 16, which does not match, this could be caused by the larger categorical variables in question 16.
 
