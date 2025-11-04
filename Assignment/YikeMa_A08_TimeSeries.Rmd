@@ -53,9 +53,9 @@ EPA2019 <- read.csv("./Data/Raw/Ozone_TimeSeries/EPAair_O3_GaringerNC2019_raw.cs
 #combine into one dataset
 GaringerOzone <- rbind(EPA2010,EPA2011,EPA2012,EPA2013,EPA2014,EPA2015,EPA2016,EPA2017,EPA2018,EPA2019)
 #write.csv(GaringerOzone, "./Data/Processed/EPAair_Garinger_combined.csv")
-GaringerOzone <- read.csv("./Data/Processed/EPAair_Garinger_combined.csv",stringsAsFactors = T)
-GaringerOzone <- GaringerOzone %>% 
-  select(-X)
+#GaringerOzone <- read.csv("./Data/Processed/EPAair_Garinger_combined.csv",stringsAsFactors = T)
+#GaringerOzone <- GaringerOzone %>% 
+#  select(-X)
 
 
 #set theme
@@ -77,12 +77,14 @@ theme_set(mytheme)
 
 ```{r}
 # 3
-GaringerOzone$Date <- ymd(GaringerOzone$Date)
+GaringerOzone$Date <- mdy(GaringerOzone$Date)
 # 4
 GaringerOzone.daily <- GaringerOzone %>% 
   select(Date, Daily.Max.8.hour.Ozone.Concentration, DAILY_AQI_VALUE)
 # 5
-Days <- as.data.frame(seq(GaringerOzone.select$Date[1],GaringerOzone.select$Date[3589],1))
+Days <- as.data.frame(seq(as.Date("2010-01-01"),
+                          as.Date("2019-12-31"),
+                          1))
 colnames(Days) <- c("Date")
 # 6
 GaringerOzone <- left_join(Days, GaringerOzone.daily)
@@ -105,7 +107,7 @@ lineplot <-
 lineplot
 ```
 
->Answer: The plot (linear model) suggests a slight decrease in ozone concentrations across 10 years.
+>Answer: The plot (linear model) suggests a seasonal change and a slight decrease in ozone concentrations over 10 years.
 
 ## Time Series Analysis
 
@@ -114,11 +116,11 @@ Study question: Have ozone concentrations changed over the 2010s at this station
 8. Use a linear interpolation to fill in missing daily data for ozone concentration. Why didn't we use a piecewise constant or spline interpolation?
 
 ```{r}
-#8
+#8 No NAs in the new column Daily.Ozone
 GaringerOzone <- GaringerOzone %>% 
-  mutate(Daily.Max.8.hour.Ozone.Concentration = na.approx(Daily.Max.8.hour.Ozone.Concentration))
-
-summary(GaringerOzone$Daily.Max.8.hour.Ozone.Concentration) #0 NA
+  mutate(Daily.Ozone = na.approx(Daily.Max.8.hour.Ozone.Concentration))
+#No NAs in the new column Daily.Ozone
+summary(GaringerOzone$Daily.Ozone) #0 NA
 ```
 
 > Answer: Piecewise constant is unsuitable for data sets that vary continuously, and spline interpolation is used to create smooth curves, particularly when high accuracy is required.
@@ -131,7 +133,7 @@ Here, linear interpolation makes reasonable assumption when data changes overtim
 GaringerOzone.monthly <- GaringerOzone %>% 
   mutate(year = year(Date), month = month(Date)) %>% #add new columns
   group_by(year, month) %>% 
-  summarise(mean = mean(Daily.Max.8.hour.Ozone.Concentration)) %>% 
+  summarise(mean = mean(Daily.Ozone)) %>% 
   mutate(yearmonth = paste(as.factor(year),as.factor(month)))
 
 GaringerOzone.monthly$yearmonth <- ym(GaringerOzone.monthly$yearmonth)
@@ -142,11 +144,11 @@ GaringerOzone.monthly$yearmonth <- ym(GaringerOzone.monthly$yearmonth)
 
 ```{r}
 #10
-fmonth <- month(first(GaringerOzone.monthly$Date))
-fyear <- year(first(GaringerOzone.monthly$Date))
+fmonth <- month(first(GaringerOzone$Date))
+fyear <- year(first(GaringerOzone$Date))
 
 GaringerOzone.daily.ts <- 
-  ts(GaringerOzone$Daily.Max.8.hour.Ozone.Concentration,
+  ts(GaringerOzone$Daily.Ozone,
      start = c(fyear, fmonth),
      frequency = 365)
 
@@ -223,9 +225,12 @@ ggplot(monthly.component)+
 
 #16
 monthly.trend.mk <- Kendall::MannKendall(GaringerOzone.monthly.ts)
-monthly.trend.mk
+monthly.trend.mk #p = 0.337
+
+daily.trend.smk<- Kendall::SeasonalMannKendall(GaringerOzone.daily.ts)
+daily.trend.smk #p = 0.0005
 
 
 ```
 
-> Answer: P-value was reported to be 0.33 when using Mann Kendall assessment, significantly higher than SMK (p = 0.047).
+> Answer: P value obtained from SMK on the complete series is 0.0005, indicating there is a trend even when seasonality is taken into consideration. While a much higher value (p=0.337) is obtained from Mann Kendall on monthly series, which is not as significant as treating it as seasonal data. (We have also obtained a 0.047 from SMK on monthly series in question 12.) 
