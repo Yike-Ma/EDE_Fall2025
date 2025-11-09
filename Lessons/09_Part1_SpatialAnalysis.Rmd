@@ -41,11 +41,11 @@ Install as necessary and ensure they can each be imported without error.
 #Import the familiar libraries
 library(tidyverse); library(lubridate); library(here)
 
-#install.packages('sf')
+install.packages('sf')
 library(sf)
-#install.packages('leaflet')
+install.packages('leaflet')
 library(leaflet)
-#install.packages('mapview')
+install.packages('mapview')
 library(mapview); mapviewOptions(fgb = FALSE)
 
 #Disable on-the-fly projections
@@ -127,7 +127,7 @@ EPAair <- read.csv(
 EPAair.sites <- EPAair %>% 
   group_by(Site.Name, COUNTY, mean_Lat, mean_Lng) %>% 
   summarize(
-    mean_Ozone = mean(Ozone, na.rm=T), #What does "na.rm=T" do? Is it necessary?
+    mean_Ozone = mean(Ozone, na.rm=T), #What does "na.rm=T" do? Is it necessary? calculate mean without NA data
     mean_PM25 = mean(PM2.5, na.rm=T),
     count_all = n(),                   #Adds a record count column
     count_Ozone = sum(!is.na(Ozone)),  #Counts the rows w/Ozone data
@@ -149,7 +149,8 @@ st_write(
   )
 
 #View the sf object using the methods above...
-
+mapview(EPAair.sf,cex = 'mean_PM25')
+#cex size the points based on an attribute
 ```
 
 

@@ -116,16 +116,17 @@ mapView(counties_sf)
 
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
-huc8_sf <- 
+huc8_sf <- st_read(here('Data/Spatial/NCHUC8.shp'))
 
 #Reveal the column names
-
+colnames(huc8_sf)
 
 #Check the CRS
-
+st_crs(huc8_sf)$epsg
 
 #View the data as a map, colored by the acreage in each
-
+mapview(huc8_sf,
+        zcol = 'ACRES')
 
 ```
 
