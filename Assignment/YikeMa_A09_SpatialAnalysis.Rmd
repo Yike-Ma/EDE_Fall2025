@@ -217,7 +217,7 @@ gage.location.join.utm <- gage.location.join %>%
 ggplot()+
   geom_sf(data = Counties.utm, fill = 'lightyellow')+
   geom_sf(data = gage.location.join.utm, color = 'blue', size = 0.8)+
-  #geom_sf(data = gage.location.join, color = 'red', size = 0.8)
+  #geom_sf(data = gage.location.join, color = 'red', size = 0.8)+
   theme_bw()
 
 ```
@@ -242,27 +242,27 @@ washington <- Counties.utm %>%
   filter(NAME == "Washington")
 
 #23 Spatially select gages within the selected county to a new spatial dataframe
-gage.washingtong <- gage.location.join.utm %>% 
+gage.washington <- gage.location.join.utm %>% 
   st_filter(washington)
-mapview(washington)+mapview(gage.washingtong)
+mapview(washington)+mapview(gage.washington)
 
 #24 Spatially select gages within 20k of the selected county to a new spatial dataframe
-washingtong.buffer <- washington %>% 
+washington.buffer <- washington %>% 
   st_buffer(20000)
 
-gage.washingtong.buffer <- gage.location.join.utm %>% 
-  st_filter(washingtong.buffer)
-mapview(washingtong.buffer)+mapview(gage.washingtong.buffer)
+gage.washington.buffer <- gage.location.join.utm %>% 
+  st_filter(washington.buffer)
+mapview(washington.buffer)+mapview(gage.washington.buffer)
 #25 Plot
 ggplot()+
   geom_sf(data = Counties.utm, fill='lightyellow')+
   geom_sf(data = washington, fill = 'yellow')+
-  geom_sf(data = gage.washingtong.buffer, color = 'blue')+
-    geom_sf(data = gage.washingtong, color = 'green')+
+  geom_sf(data = gage.washington.buffer, color = 'blue')+
+    geom_sf(data = gage.washington, color = 'green')+
   theme_bw()
 
 mapview(Counties.utm)+
-  mapview(washington)+
-  mapview(gage.washingtong)+
-  mapview(gage.washingtong.buffer, zcol = 'gage_ht')
+  mapview(washington, col.regions = 'darkblue')+
+  mapview(gage.washington.buffer, col.regions = 'orange')+
+    mapview(gage.washington, col.regions = 'yellow')
 ```
